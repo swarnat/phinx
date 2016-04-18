@@ -544,7 +544,7 @@ class Manager
                         ));
                     }
 
-                    $fileNames[$class] = basename($filePath);
+                    $fileNames[$class] = ($filePath);
 
                     $migration = $this->instantiateMigration($filePath, $class, $version);
 
@@ -694,7 +694,8 @@ class Manager
      */
     public function schemaDump($environment)
     {
-        $filePath = $this->loadSchemaFilePath();
+        $envOptions = $this->getConfig()->getEnvironment($environment);
+        $filePath = $this->loadSchemaFilePath($envOptions["schema_name"]);
         $dump = $this->getEnvironment($environment)->schemaDump();
         if (!$dump) {
             $this->getOutput()->writeln('<comment>Database is empty. Nothing to dump!</comment>');
@@ -715,7 +716,12 @@ class Manager
     {
         $this->getEnvironment($environment)->getAdapter()->toggleForeignKeyChecks();
         $this->resetDatabase($environment);
-        $migration = $this->instantiateMigration($filePath, 'Schema', 0);
+        $class = Util::mapFileNameToClassName(basename($filePath));
+        $pos = strpos($class, '.php');
+        if($pos !== false) {
+            $class = substr($class, 0, $pos);
+        }
+        $migration = $this->instantiateMigration($filePath, $class, 0);
         $this->executeMigration($environment, $migration, MigrationInterface::UP);
         $this->getEnvironment($environment)->getAdapter()->toggleForeignKeyChecks();
     }
@@ -756,7 +762,12 @@ class Manager
             );
         }
         $schemaPath = realpath($schemaPath);
-        $fileName = 'schema.php';
+        if($schema_name != '') {
+            $fileName = $schema_name . '_schema.php';
+        } else {
+           $fileName = 'schema.php'; 
+        }
+        
         return $schemaPath . DIRECTORY_SEPARATOR . $fileName;
     }
 }

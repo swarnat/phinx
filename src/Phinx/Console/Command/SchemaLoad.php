@@ -45,7 +45,7 @@ class SchemaLoad extends AbstractCommand
         $output->writeln('<info>using adapter</info> ' . $envOptions['adapter']);
         $output->writeln('<info>using database</info> ' . $envOptions['name']);
 
-        $filePath = $this->getManager()->loadSchemaFilePath();
+        $filePath = $this->getManager()->loadSchemaFilePath($envOptions["schema_name"]);
         if (!file_exists($filePath)) {
             $output->writeln('<comment>Schema file missing. Nothing to load.</comment>');
 
@@ -60,15 +60,6 @@ class SchemaLoad extends AbstractCommand
             $output->writeln('Aborting.');
             return;
         }
-//        if (!$dialog->askConfirmation(
-//            $output,
-//            '<question>Hey! You must be pretty damn sure that you want to destroy \''.$envOptions['name'].'\'. Are you sure? (y/n)</question>',
-//            false
-//        )) {
-//            $output->writeln('Aborting.');
-//
-//            return;
-//        }
 
         $start = microtime(true);
         $this->getManager()->schemaLoad($environment, $filePath);
