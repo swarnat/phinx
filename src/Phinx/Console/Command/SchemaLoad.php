@@ -17,6 +17,7 @@ class SchemaLoad extends AbstractCommand
         parent::configure();
 
         $this->addOption('--environment', '-e', InputArgument::OPTIONAL, 'The target environment');
+        $this->addOption('--destroy', '-d', InputArgument::OPTIONAL, 'Destroy database without asking');
 
         $this->setName('schema:load')
             ->setDescription('Load schema to the database.');
@@ -33,6 +34,7 @@ class SchemaLoad extends AbstractCommand
         $this->bootstrap($input, $output);
 
         $environment = $input->getOption('environment');
+        $destroy = $input->getOption('destroy');
 
         if (null === $environment) {
             $environment = $this->getConfig()->getDefaultEnvironment();
@@ -56,9 +58,15 @@ class SchemaLoad extends AbstractCommand
         $question = new ConfirmationQuestion('Hey! You must be pretty damn sure that you want to destroy \''.$envOptions['name'].'\'. Are you sure? (y/n) ', false);
 
 
-        if (!$helper->ask($input, $output, $question)) {
-            $output->writeln('Aborting.');
-            return;
+        if(null === $destroy) {
+            $helper = $this->getHelperSet()->get('question');
+            $question = new ConfirmationQuestion('Hey! You must be pretty damn sure that you want to destroy \''.$envOptions['name'].'\'. Are you sure? (y/n) ', false);
+
+
+            if (!$helper->ask($input, $output, $question)) {
+                $output->writeln('Aborting.');
+                return;
+            }
         }
 
         $start = microtime(true);
