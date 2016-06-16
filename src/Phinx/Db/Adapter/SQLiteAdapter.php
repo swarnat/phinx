@@ -292,6 +292,10 @@ class SQLiteAdapter extends PdoAdapter implements AdapterInterface
             $column->setType($phinxType['name'])
                    ->setLimit($phinxType['limit']);
 
+            if ($phinxType['values'] !== null) {
+                $column->setValues($phinxType['values']);
+            }
+
             if ($columnInfo['pk'] == 1) {
                 $column->setIdentity(true);
             }
@@ -931,6 +935,7 @@ class SQLiteAdapter extends PdoAdapter implements AdapterInterface
         } else {
             $limit = null;
             $precision = null;
+            $values = null;
             $type = $matches[1];
             if (count($matches) > 2) {
                 $limit = $matches[3] ? $matches[3] : null;
@@ -982,7 +987,8 @@ class SQLiteAdapter extends PdoAdapter implements AdapterInterface
             return array(
                 'name' => $type,
                 'limit' => $limit,
-                'precision' => $precision
+                'precision' => $precision,
+                'values' => $values,
             );
         }
     }
