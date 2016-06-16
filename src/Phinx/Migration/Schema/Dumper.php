@@ -28,15 +28,15 @@ class Dumper
     }
 
     /**
-     * @return string with php code
+     * @return string PHP code to re-create schema.
      *
      * @throws \Exception
      */
     public function dump()
     {
         $tables = $this->getAdapter()->getTables();
-        if (!$tables) {
 
+        if (!$tables) {
             return "";
         }
 
