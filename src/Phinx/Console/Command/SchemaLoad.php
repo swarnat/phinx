@@ -54,9 +54,6 @@ class SchemaLoad extends AbstractCommand
             return;
         }
 
-        $helper = $this->getHelperSet()->get('question');
-        $question = new ConfirmationQuestion('Hey! You must be pretty damn sure that you want to destroy \''.$envOptions['name'].'\'. Are you sure? (y/n) ', false);
-
         if(null === $destroy) {
             $helper = $this->getHelperSet()->get('question');
             $question = new ConfirmationQuestion('Hey! You must be pretty damn sure that you want to destroy \''.$envOptions['name'].'\'. Are you sure? (y/n) ', false);
