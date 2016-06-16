@@ -47,21 +47,19 @@ class SchemaLoad extends AbstractCommand
         $output->writeln('<info>using adapter</info> ' . $envOptions['adapter']);
         $output->writeln('<info>using database</info> ' . $envOptions['name']);
 
-        $filePath = $this->getManager()->loadSchemaFilePath($envOptions["schema_name"]);
+        $schemaName = isset($envOptions["schema_name"]) ? $envOptions["schema_name"] : '';
+        $filePath = $this->getManager()->loadSchemaFilePath($schemaName);
         if (!file_exists($filePath)) {
             $output->writeln('<comment>Schema file missing. Nothing to load.</comment>');
-
             return;
         }
 
         $helper = $this->getHelperSet()->get('question');
         $question = new ConfirmationQuestion('Hey! You must be pretty damn sure that you want to destroy \''.$envOptions['name'].'\'. Are you sure? (y/n) ', false);
 
-
         if(null === $destroy) {
             $helper = $this->getHelperSet()->get('question');
             $question = new ConfirmationQuestion('Hey! You must be pretty damn sure that you want to destroy \''.$envOptions['name'].'\'. Are you sure? (y/n) ', false);
-
 
             if (!$helper->ask($input, $output, $question)) {
                 $output->writeln('Aborting.');

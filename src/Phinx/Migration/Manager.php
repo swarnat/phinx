@@ -695,7 +695,8 @@ class Manager
     public function schemaDump($environment)
     {
         $envOptions = $this->getConfig()->getEnvironment($environment);
-        $filePath = $this->loadSchemaFilePath($envOptions["schema_name"]);
+        $schemaName = isset($envOptions["schema_name"]) ? $envOptions["schema_name"] : '';
+        $filePath = $this->loadSchemaFilePath($schemaName);
         $dump = $this->getEnvironment($environment)->schemaDump();
         if (!$dump) {
             $this->getOutput()->writeln('<comment>Database is empty. Nothing to dump!</comment>');
@@ -743,7 +744,7 @@ class Manager
      *
      * @throws \InvalidArgumentException
      */
-    public function loadSchemaFilePath()
+    public function loadSchemaFilePath($schemaName)
     {
         $migrationPath = $this->getConfig()->getMigrationPath();
         $schemaPath = $migrationPath.DIRECTORY_SEPARATOR.'schema';
@@ -762,12 +763,12 @@ class Manager
             );
         }
         $schemaPath = realpath($schemaPath);
-        if($schema_name != '') {
-            $fileName = $schema_name . '_schema.php';
+        if ($schemaName != '') {
+            $fileName = $schemaName . '_schema.php';
         } else {
-           $fileName = 'schema.php'; 
+            $fileName = 'schema.php';
         }
-        
+
         return $schemaPath . DIRECTORY_SEPARATOR . $fileName;
     }
 }
