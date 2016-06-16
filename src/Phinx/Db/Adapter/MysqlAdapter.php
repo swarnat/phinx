@@ -41,7 +41,6 @@ use Phinx\Db\Table\ForeignKey;
 class MysqlAdapter extends PdoAdapter implements AdapterInterface
 {
 
-    protected $foreignKeyCheck = true;
     protected $signedColumnTypes = array('integer' => true, 'biginteger' => true, 'float' => true, 'decimal' => true, 'boolean' => true);
 
     const TEXT_TINY    = 255;
@@ -177,6 +176,23 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     public function quoteColumnName($columnName)
     {
         return '`' . str_replace('`', '``', $columnName) . '`';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTables()
+    {
+        $options = $this->getOptions();
+
+        $tables = array();
+        $rows = $this->fetchAll(sprintf('SHOW TABLES IN `%s`', $options['name']));
+        foreach ($rows as $row) {
+            $tableOptions = $this->getTableOptions($row[0]);
+            $tables[] = new Table($row[0], $tableOptions, $this);
+        }
+
+        return $tables;
     }
 
     /**
@@ -1113,41 +1129,6 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @return Table[]
-     *
-     * TODO: add to the interface
-     */
-    public function getTables()
-    {
-        $options = $this->getOptions();
-
-        $tables = array();
-        $rows = $this->fetchAll(sprintf('SHOW TABLES IN `%s`', $options['name']));
-        foreach ($rows as $row) {
-            $tableOptions = $this->getTableOptions($row[0]);
-            $tables[] = new Table($row[0], $tableOptions, $this);
-        }
-
-        return $tables;
-    }
-
-    /**
-     * Disable or enable foreign key checks.
-     *
-     * TODO: add to the interface
-     */
-    public function toggleForeignKeyChecks()
-    {
-        $this->foreignKeyCheck = $this->foreignKeyCheck ? false : true;
-
-        if ($this->foreignKeyCheck) {
-            $this->execute('SET FOREIGN_KEY_CHECKS=1');
-        } else {
-            $this->execute('SET FOREIGN_KEY_CHECKS=0');
-        }
-    }
-
-    /**
      * @param string $tableName
      *
      * @return array
@@ -1214,5 +1195,17 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     public function getColumnTypes()
     {
         return array_merge(parent::getColumnTypes(), array ('enum', 'set', 'year', 'json'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setForeignKeyChecks($enabled)
+    {
+        if ($enabled) {
+            $this->execute('SET FOREIGN_KEY_CHECKS=1');
+        } else {
+            $this->execute('SET FOREIGN_KEY_CHECKS=0');
+        }
     }
 }

@@ -715,21 +715,22 @@ class Manager
      */
     public function schemaLoad($environment, $filePath)
     {
-        $this->getEnvironment($environment)->getAdapter()->toggleForeignKeyChecks();
+        $this->getEnvironment($environment)->getAdapter()->setForeignKeyChecks(false);
         $this->resetDatabase($environment);
         $class = Util::mapFileNameToClassName(basename($filePath));
         $pos = strpos($class, '.php');
-        if($pos !== false) {
+        if ($pos !== false) {
             $class = substr($class, 0, $pos);
         }
         $migration = $this->instantiateMigration($filePath, $class, 0);
         $this->executeMigration($environment, $migration, MigrationInterface::UP);
-        $this->getEnvironment($environment)->getAdapter()->toggleForeignKeyChecks();
+        $this->getEnvironment($environment)->getAdapter()->setForeignKeyChecks(true);
     }
     /**
      * @param string $environment
      */
-    public function resetDatabase($environment) {
+    public function resetDatabase($environment)
+    {
         $this->getOutput()->writeln(" == <comment>Resetting database</comment>");
         $tables = $this->getEnvironment($environment)->getAdapter()->getTables();
         if (count($tables) > 0) {

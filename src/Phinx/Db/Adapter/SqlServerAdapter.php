@@ -193,6 +193,14 @@ class SqlServerAdapter extends PdoAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
+    public function getTables()
+    {
+        throw new Exception('Not implemented yet.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function hasTable($tableName)
     {
         $result = $this->fetchRow(sprintf('SELECT count(*) as [count] FROM information_schema.tables WHERE table_name = \'%s\';', $tableName));
@@ -1193,5 +1201,13 @@ SQL;
         }
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setForeignKeyChecks($enabled)
+    {
+        throw new Exception('Not implemented yet.');
     }
 }
