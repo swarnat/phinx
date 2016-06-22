@@ -150,7 +150,7 @@ class SQLiteAdapter extends PdoAdapter implements AdapterInterface
     public function getTables()
     {
         $tables = array();
-        $rows = $this->fetchAll('SELECT name FROM sqlite_master WHERE type=\'table\'');
+        $rows = $this->fetchAll('SELECT name FROM sqlite_master WHERE type=\'table\' AND name != \'sqlite_sequence\'');
         foreach ($rows as $row) {
             $tableOptions = $this->getTableOptions($row[0]);
             $tables[] = new Table($row[0], $tableOptions, $this);
