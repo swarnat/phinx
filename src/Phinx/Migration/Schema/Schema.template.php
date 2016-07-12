@@ -18,21 +18,21 @@ class Schema extends AbstractMigration
         ->create();
 
     <?php endforeach; ?>
-	<?php foreach ($tables as $table) : ?>
-		<?php
-		$rows = $table->fetchAll();
-		foreach($rows as $index => $row) {
-			foreach($row as $key => $value) {
-				if(is_numeric($key)) {
-					unset($rows[$index][$key]);
-				}
-			}
-		}
-		if(!empty($rows)) : ?>
-			$data = <?php echo var_export($rows, true); ?>;
-			$this->table('<?php echo $table->getName(); ?>')->insert($data);
-		<?php endif; ?>
-	<?php endforeach; ?>
+    <?php foreach ($tables as $table) : ?>
+        <?php
+        $rows = $table->fetchAll();
+        foreach($rows as $index => $row) {
+            foreach($row as $key => $value) {
+                if(is_numeric($key)) {
+                    unset($rows[$index][$key]);
+                }
+            }
+        }
+        if(!empty($rows)) : ?>
+            $data = <?php echo var_export($rows, true); ?>;
+            $this->table('<?php echo $table->getName(); ?>')->insert($data);
+        <?php endif; ?>
+    <?php endforeach; ?>
     <?php foreach ($tables as $table) : ?>
         <?php
     //    $foreignKeys = $table->getAdapter()->getForeignKeys($table->getName());

@@ -671,17 +671,17 @@ class Table
 
         $this->reset(); // reset pending changes
     }
-	
-	/**
-	 * Fetch rows from Table
-	 *
-	 * @return array
-	 */
-	public function fetchAll() {
-		if($this->fetchResult === null) {
-			$this->fetchResult = $this->getAdapter()->fetchAll('SELECT * FROM `'.$this->name.'`');
-		}
-		
-		return $this->fetchResult;
-	}
+    
+    /**
+     * Fetch rows from Table
+     *
+     * @return array
+     */
+    public function fetchAll() {
+        if($this->fetchResult === null) {
+            $this->fetchResult = $this->getAdapter()->fetchAll('SELECT * FROM `'.$this->name.'`');
+        }
+        
+        return $this->fetchResult;
+    }
 }
