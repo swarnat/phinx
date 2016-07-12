@@ -363,7 +363,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
                    ->setType($phinxType['name'])
                    ->setLimit($phinxType['limit']);
 
-            if ($phinxType['values'] !== null) {
+               if ($phinxType['values'] !== null) {
                 $column->setValues($phinxType['values']);
             }
 
@@ -779,6 +779,9 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
                 }
                 return array('name' => 'text');
                 break;
+            case static::PHINX_TYPE_VARBINARY:
+                return array('name' => 'varbinary', 'limit' => $limit ? $limit : 255);
+                break;                
             case static::PHINX_TYPE_BINARY:
                 return array('name' => 'binary', 'limit' => $limit ? $limit : 255);
                 break;
@@ -945,6 +948,9 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
                     }
                     $type = static::PHINX_TYPE_BIG_INTEGER;
                     break;
+                case 'varbinary':
+                    $type  = static::PHINX_TYPE_VARBINARY;
+                    $limit = static::BLOB_TINY;                    
                 case 'blob':
                     $type = static::PHINX_TYPE_BINARY;
                     break;
@@ -974,6 +980,10 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
                     break;
                 case 'enum':
                     $type  = static::PHINX_TYPE_ENUM;
+                    $values = str_getcsv(substr($matches[6], 1, -1), ',', '\'');
+                    break;
+                case 'set':
+                    $type  = static::PHINX_TYPE_SET;
                     $values = str_getcsv(substr($matches[6], 1, -1), ',', '\'');
                     break;
             }
